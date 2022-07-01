@@ -1,18 +1,29 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js App" />
-  </div>
+  <NavBar></NavBar>
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from "@/components/HelloWorld.vue";
+/* eslint-disable no-unused-vars */
+
+import { mapActions, mapState } from 'vuex';
 
 export default {
-  name: "Home",
-  components: {
-    HelloWorld,
+  data() {
+    return {
+
+    }
   },
+
+  async mounted() {
+    await this.getAllCityList();
+  },
+
+
+  computed: {
+    ...mapActions({
+      getAllCityList: "weather/getAllCityList",
+    }),
+  },
+
 };
 </script>
