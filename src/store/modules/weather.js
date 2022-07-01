@@ -5,41 +5,60 @@ export const weather = {
 	state: () => {
 		return {
 			WEATHER_API: '5335145300994666ae6125040220107',
+			allCountryList: [],
 			allCityList: [],
-			currentCountry: 'a'
+			allListCountryAndCity: null,
+			searchItem: ''
 		};
 	},
 	mutations: {
-		updateCityList(state, cityList) {
-			for (const key in cityList) {
+		updateCountryList(state, countryList) {
+			for (const key in countryList) {
 				if (key === '') {
-					delete cityList[key]
+					delete countryList[key]
 				} else {
-					state.allCityList.push(key)
+					state.allCountryList.push(key)
 				}
 
 			}
 		},
 
-		setCurrentCountry(state, currentCountry) {
-			state.currentCountry = currentCountry;
+		updateAllListCountryAndCity(state, allListCountryAndCity) {
+			state.allListCountryAndCity = allListCountryAndCity
+		},
+
+		updateCityList(state, cityList) {
+			for (const key in state.allListCountryAndCity) {
+				if (cityList === key) {
+					state.allCityList = state.allListCountryAndCity[key]
+				}
+			}
+		},
+		setCurrentSearchItem(state, searchItem) {
+			state.searchItem = searchItem;
 		},
 	},
 
 	getters: {
-		searchCountry(state, getters) {
-			return [...state.allCityList].filter(country => country.toLowerCase().includes(state.currentCountry.toLowerCase()));
+		searchCountry(state) {
+			return [...state.allCountryList].filter(listItem => listItem.toLowerCase().includes(state.searchItem.toLowerCase()));
 		},
+
+		searchCity(state) {
+			return [...state.allCityList].filter(listItem => listItem.toLowerCase().includes(state.searchItem.toLowerCase()));
+		}
 	},
+
+
 	actions: {
-		async getAllCityList({ commit }) {
+		async getAllCountryList({ commit }) {
 
 			await axios({
 				method: 'get',
 				url: 'https://raw.githubusercontent.com/David-Haim/CountriesToCitiesJSON/master/countriesToCities.json',
 			}).then((response) => {
-				commit('updateCityList', response.data);
-				console.log(response.data);
+				commit('updateAllListCountryAndCity', response.data)
+				commit('updateCountryList', response.data);
 			})
 		}
 	},

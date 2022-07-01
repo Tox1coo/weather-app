@@ -15,13 +15,13 @@ export default {
   },
 
   async mounted() {
-    await this.getAllCityList();
+    await this.getAllCountryList();
   },
 
 
   computed: {
     ...mapActions({
-      getAllCityList: "weather/getAllCityList",
+      getAllCountryList: "weather/getAllCountryList",
     }),
   },
 

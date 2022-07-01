@@ -3,9 +3,9 @@
     <p
       class="drop__item"
       :value="country"
-      v-for="country in countries"
+      v-for="country in list"
       :key="country"
-      @click="setCountry(country)"
+      @click="setSearchList(country)"
     >
       {{ country }}
     </p>
@@ -14,7 +14,7 @@
 
 <script>
 /* eslint-disable prettier/prettier */
-
+import {mapMutations} from 'vuex'
 export default {
   name: "DropList",
   data() {
@@ -22,17 +22,24 @@ export default {
   },
 
   props: {
-    countries: {
+   list: {
       type: Array,
       required: true,
     },
-    currentCountry: String,
+    currentSearchItem: String,
 	 visibleDropList: Boolean,
   },
 
+	computed: {
+
+	},
   methods: {
-    setCountry(country) {
-      this.$emit("update:currentCountry", country);
+	...mapMutations({
+		updateCityList: 'weather/updateCityList',
+	}),
+    setSearchList(country) {
+		this.updateCityList(country)
+      this.$emit("update:currentSearchItem", country);
 		this.$emit("update:visibleDropList", false);
     },
   },
