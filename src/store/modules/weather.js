@@ -8,7 +8,10 @@ export const weather = {
 			allCountryList: [],
 			allCityList: [],
 			allListCountryAndCity: null,
-			searchItem: ''
+			searchItem: '',
+			country: null,
+			city: null
+
 		};
 	},
 	mutations: {
@@ -23,17 +26,28 @@ export const weather = {
 			}
 		},
 
+		setCurrentCountry(state, country) {
+			state.allCityList = [];
+			state.city = '';
+			state.country = [...state.allCountryList].filter(listItem => listItem.toLowerCase().includes(country.toLowerCase()))[0];
+		},
+
+		setCurrentCity(state, city) {
+			state.city = [...state.allCityList].filter(listItem => listItem.toLowerCase().includes(city.toLowerCase()))[0];
+		},
+
 		updateAllListCountryAndCity(state, allListCountryAndCity) {
 			state.allListCountryAndCity = allListCountryAndCity
 		},
 
 		updateCityList(state, cityList) {
 			for (const key in state.allListCountryAndCity) {
-				if (cityList === key) {
+				if (cityList.toLowerCase() === key.toLocaleLowerCase()) {
 					state.allCityList = state.allListCountryAndCity[key]
 				}
 			}
 		},
+
 		setCurrentSearchItem(state, searchItem) {
 			state.searchItem = searchItem;
 		},
