@@ -19,27 +19,39 @@ export default {
 			checkFormCountry: false,
 			checkFormCity: false,
 			itemBlock: '',
+			dateNow: new Date()
 		}
 	},
 	methods: {
 		...mapGetters({
-			searchCountry: "weather/searchCountry",
-			searchCity: "weather/searchCity",
+			searchCountry: "dbCountry/searchCountry",
+			searchCity: "dbCountry/searchCity",
 		}),
 		...mapMutations({
-			setCurrentCountry: "weather/setCurrentCountry",
-			setCurrentCity: "weather/setCurrentCity",
-
+			setCurrentCountry: "dbCountry/setCurrentCountry",
+			setCurrentCity: "dbCountry/setCurrentCity",
 		}),
+	},
 
+	props: {
+		check: {
+			type: Boolean,
+			default: false,
+		},
 	},
   computed: {
 	...mapState({
-      allCountryList: (state) => state.weather.allCountryList,
-		country: (state) => state.weather.country,
-		city: (state) => state.weather.city
+      allCountryList: (state) => state.dbCountry.allCountryList,
+		country: (state) => state.dbCountry.country,
+		city: (state) => state.dbCountry.city
 	})
+  },
 
+  watch: {
+		check(newCheck) {
+			this.checkFormCity = newCheck
+			this.checkFormCountry = newCheck
+		}
   }
 };
 </script>

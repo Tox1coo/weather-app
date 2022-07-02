@@ -41,7 +41,6 @@ export default {
 	border: 1px solid #4cf6ff;
 	p {
 		cursor: pointer;
-		text-decoration:  underline dashed;
 
 	}
 }

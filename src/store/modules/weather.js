@@ -1,81 +1,46 @@
 /* eslint-disable no-unused-vars */
-/* eslint-disable prettier/prettier */
-import axios from 'axios'
+
+import axios from "axios";
+
 export const weather = {
 	state: () => {
 		return {
 			WEATHER_API: '5335145300994666ae6125040220107',
-			allCountryList: [],
-			allCityList: [],
-			allListCountryAndCity: null,
-			searchItem: '',
-			country: null,
-			city: null
-
+			BASE_URL: 'http://api.weatherapi.com/v1/',
+			weatherInfo: null,
+			currentWeather: null
 		};
 	},
+
 	mutations: {
-		updateCountryList(state, countryList) {
-			for (const key in countryList) {
-				if (key === '') {
-					delete countryList[key]
-				} else {
-					state.allCountryList.push(key)
-				}
-
-			}
+		updateWeatherInfo(state, weatherInfo) {
+			state.weatherInfo = weatherInfo;
 		},
-
-		setCurrentCountry(state, country) {
-			state.allCityList = [];
-			state.city = '';
-			state.country = [...state.allCountryList].filter(listItem => listItem.toLowerCase().includes(country.toLowerCase()))[0];
-		},
-
-		setCurrentCity(state, city) {
-			state.city = [...state.allCityList].filter(listItem => listItem.toLowerCase().includes(city.toLowerCase()))[0];
-		},
-
-		updateAllListCountryAndCity(state, allListCountryAndCity) {
-			state.allListCountryAndCity = allListCountryAndCity
-		},
-
-		updateCityList(state, cityList) {
-			for (const key in state.allListCountryAndCity) {
-				if (cityList.toLowerCase() === key.toLocaleLowerCase()) {
-					state.allCityList = state.allListCountryAndCity[key]
-				}
-			}
-		},
-
-		setCurrentSearchItem(state, searchItem) {
-			state.searchItem = searchItem;
-		},
-	},
-
-	getters: {
-		searchCountry(state) {
-			return [...state.allCountryList].filter(listItem => listItem.toLowerCase().includes(state.searchItem.toLowerCase()));
-		},
-
-		searchCity(state) {
-			return [...state.allCityList].filter(listItem => listItem.toLowerCase().includes(state.searchItem.toLowerCase()));
+		updateCurrentWeather(state, currentWeather) {
+			state.currentWeather = currentWeather;
 		}
 	},
 
-
 	actions: {
-		async getAllCountryList({ commit }) {
-
+		async getWeatherInfo({ commit, state }, userInfo) {
 			await axios({
 				method: 'get',
-				url: 'https://raw.githubusercontent.com/David-Haim/CountriesToCitiesJSON/master/countriesToCities.json',
+				url: `${state.BASE_URL}forecast.json?key=${state.WEATHER_API}&q=${userInfo.infoUser.city}&days=5&aqi=no&alerts=no`
 			}).then((response) => {
-				commit('updateAllListCountryAndCity', response.data)
-				commit('updateCountryList', response.data);
+				commit('updateCurrentWeather', response.data.current)
+				commit('updateWeatherInfo', response.data)
+			})
+		},
+		async getWeather({ commit, state }, city) {
+			await axios({
+				method: 'get',
+				url: `${state.BASE_URL}forecast.json?key=${state.WEATHER_API}&q=${city.city}&days=5&aqi=no&alerts=no`
+			}).then((response) => {
+				commit('updateCurrentWeather', response.data.current)
+				commit('updateWeatherInfo', response.data)
 			})
 		}
 	},
 
-	namespaced: true
-}
+	namespaced: true,
+};

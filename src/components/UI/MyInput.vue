@@ -4,7 +4,7 @@
       type="text"
       :value="modelValue"
       @input="updateInput($event)"
-		@click="$emit('update:visibleDropList', true)"
+		  @click="$emit('update:visibleDropList', true)"
       class="input"
     />
     <img class="search" :src="require('@/assets/search.svg')" alt="" />
@@ -18,6 +18,7 @@ export default {
   props: {
     modelValue: [String, Number],
     visibleDropList: Boolean,
+    placeholderInput:String,
   },
 
   methods: {

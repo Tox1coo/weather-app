@@ -3,18 +3,28 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
+
 import Home from '@/views/Home.vue'
 export default {
   components: {Home},
 
-  mounted() {
+  async mounted() {
     let app = document.getElementById('app');
-    const date = new Date().getHours();
-    if(date >= 9) {
+    const time = new Date().getHours();
+    if(time >= 9 && time <= 18) {
       app.style.cssText = `background: url(${require('@/assets/mount.jpg')}) #ccc center no-repeat; background-size: cover`
     } else {
       app.style.cssText = `background: url(${require('@/assets/night.jpg')}) #ccc center no-repeat; background-size: cover`
     }
+    await this.getAllCountryList();
+
+  },
+
+  computed: {
+     ...mapActions({
+      getAllCountryList: "dbCountry/getAllCountryList",
+    }),
   }
 }
 </script>

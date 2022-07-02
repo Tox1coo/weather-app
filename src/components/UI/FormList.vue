@@ -19,7 +19,7 @@
      @keydown.down="takeItem()"  // сделать спуск на список через нажатие на стрелку вниз. позже
 
 <script>
-import { mapState, mapMutations } from "vuex";
+import { mapState, mapMutations, mapActions } from "vuex";
 
 export default {
   name: "FormList",
@@ -32,10 +32,10 @@ export default {
   },
   methods: {
     ...mapMutations({
-      setCurrentSearchItem: "weather/setCurrentSearchItem",
-      updateCityList: "weather/updateCityList",
-      setCurrentCountry: "weather/setCurrentCountry",
-      setCurrentCity: "weather/setCurrentCity",
+      setCurrentSearchItem: "dbCountry/setCurrentSearchItem",
+      updateCityList: "dbCountry/updateCityList",
+      setCurrentCountry: "dbCountry/setCurrentCountry",
+      setCurrentCity: "dbCountry/setCurrentCity",
     }),
 
     setListItem() {
@@ -48,16 +48,19 @@ export default {
       } else {
         this.setCurrentCity(this.listItem);
         this.listItem = this.city;
+        this.getWeather(this.city);
       }
     },
   },
 
   computed: {
     ...mapState({
-      WEATHER_API: (state) => state.weather.WEATHER_API,
-      searchItem: (state) => state.weather.searchItem,
-      country: (state) => state.weather.country,
-      city: (state) => state.weather.city,
+      searchItem: (state) => state.dbCountry.searchItem,
+      country: (state) => state.dbCountry.country,
+      city: (state) => state.dbCountry.city,
+    }),
+    ...mapActions({
+      getWeather: "weather/getWeather",
     }),
   },
   props: {
@@ -80,7 +83,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.form {
+.search {
   position: relative;
 }
 </style>

@@ -14,7 +14,7 @@
 
 <script>
 /* eslint-disable prettier/prettier */
-import {mapMutations, mapState} from 'vuex'
+import {mapMutations, mapState, mapActions} from 'vuex'
 export default {
   name: "DropList",
   data() {
@@ -33,9 +33,9 @@ export default {
 
   methods: {
 	...mapMutations({
-		updateCityList: 'weather/updateCityList',
-    setCurrentCountry: "weather/setCurrentCountry",
-    setCurrentCity: "weather/setCurrentCity",
+		updateCityList: 'dbCountry/updateCityList',
+    setCurrentCountry: "dbCountry/setCurrentCountry",
+    setCurrentCity: "dbCountry/setCurrentCity",
 	}),
     setSearchList(country) {
       this.updateCityList(country)
@@ -49,14 +49,18 @@ export default {
       } else {
 				this.setCurrentCity(country)
         this.listItem = this.city
+        this.getWeather(this.city);
       }
     },
   },
   computed: {
     ...mapState({
-      country: (state) => state.weather.country,
-      city: (state) => state.weather.city,
-    })
+      country: (state) => state.dbCountry.country,
+      city: (state) => state.dbCountry.city,
+    }),
+    ...mapActions({
+      getWeather: "weather/getWeather",
+    }),
   }
 };
 </script>
@@ -66,6 +70,7 @@ export default {
   width: 230px;
   height: fit-content;
   position: absolute;
+  z-index: 1000;
   max-height: 300px;
   background-color: #fff;
   border-radius: 5px;
@@ -80,7 +85,7 @@ export default {
 		cursor: pointer;
     padding-top: 10px;
     padding-bottom: 10px;
-
+    padding-left: 5px;
     margin: 0;
 	}
 }
