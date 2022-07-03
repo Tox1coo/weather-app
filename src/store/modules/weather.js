@@ -25,7 +25,7 @@ export const weather = {
 		async getWeatherInfo({ commit, state }, userInfo) {
 			await axios({
 				method: 'get',
-				url: `${state.BASE_URL}forecast.json?key=${state.WEATHER_API}&q=${userInfo.infoUser.city}&days=5&aqi=no&alerts=no`
+				url: `${state.BASE_URL}forecast.json?key=${state.WEATHER_API}&q=${userInfo.city}&days=5&aqi=no&alerts=no`
 			}).then((response) => {
 				commit('updateCurrentWeather', response.data.current)
 				commit('updateWeatherInfo', response.data)
@@ -34,7 +34,7 @@ export const weather = {
 		async getWeather({ commit, state }, city) {
 			await axios({
 				method: 'get',
-				url: `${state.BASE_URL}forecast.json?key=${state.WEATHER_API}&q=${city.city}&days=5&aqi=no&alerts=no`
+				url: `${state.BASE_URL}forecast.json?key=${state.WEATHER_API}&q=${city}&days=5&aqi=no&alerts=no`
 			}).then((response) => {
 				commit('updateCurrentWeather', response.data.current)
 				commit('updateWeatherInfo', response.data)

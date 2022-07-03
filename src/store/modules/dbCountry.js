@@ -61,7 +61,6 @@ export const dbCountry = {
 		}
 	},
 
-
 	actions: {
 		async getAllCountryList({ commit }) {
 

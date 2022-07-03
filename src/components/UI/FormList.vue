@@ -51,6 +51,9 @@ export default {
         this.getWeather(this.city);
       }
     },
+    ...mapActions({
+      getWeather: "weather/getWeather",
+    }),
   },
 
   computed: {
@@ -58,9 +61,6 @@ export default {
       searchItem: (state) => state.dbCountry.searchItem,
       country: (state) => state.dbCountry.country,
       city: (state) => state.dbCountry.city,
-    }),
-    ...mapActions({
-      getWeather: "weather/getWeather",
     }),
   },
   props: {
