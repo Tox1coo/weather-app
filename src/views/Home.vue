@@ -38,7 +38,7 @@ export default {
     async getInfoUser() {
       await axios({
         method: "get",
-        url: "http://api.sypexgeo.net/json",
+        url: "https://api.sypexgeo.net/json",
       })
         .then((response) => {
           this.infoUser.city = response.data.city.name_en;
