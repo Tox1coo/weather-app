@@ -47,6 +47,9 @@ export default {
 
 <style scoped lang="scss">
 .forecast {
+  @media (max-width: 1440px) {
+    order: 0;
+  }
   &__inner {
     width: 800px;
     height: 300px;
@@ -58,6 +61,10 @@ export default {
     display: flex;
     gap: 15px;
     justify-content: space-evenly;
+
+    @media (max-width: 1440px) {
+      width: 680px;
+    }
   }
   &__current {
     width: calc((800px / 3) - 20px);

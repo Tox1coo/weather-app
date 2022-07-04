@@ -11,6 +11,7 @@
         </div>
         <div class="weather__inner-left-bottom">
           <DayLightInfo
+            v-if="!rotateDayLight"
             :dayLightInfo="weatherInfo?.forecast.forecastday[0].astro"
           ></DayLightInfo>
           <WeatherForecastBlock
@@ -20,116 +21,124 @@
           ></WeatherForecastBlock>
         </div>
       </div>
-      <div class="weather__inner-right">
-        <div class="date">
-          {{ new Date(weatherInfo?.forecast.forecastday[0].date).getUTCDate() }}
-          {{ arrMonth[month] }}, {{ arrDay[day] }}
-          {{ currentWeather?.last_updated.match(/\b\d\d:\d\d\b/).toString() }}
-        </div>
-        <div class="weather__current">
-          <img
-            v-if="currentWeather?.is_day === 0"
-            class="weather__current-img"
-            :src="
-              require(`@/assets/weather/night/${currentWeather?.condition.text}.png`)
-            "
-            alt=""
-          />
-          <img
-            v-else-if="currentWeather?.is_day === 1"
-            class="weather__current-img"
-            :src="
-              require(`@/assets/weather/day/${currentWeather?.condition.text}.png`)
-            "
-            alt=""
-          />
-          <div class="weather__current-info">
-            <p class="weather__current-temp">
-              {{ Math.round(currentWeather?.temp_c) }} °C
-            </p>
-            <p class="weather__current-temp--feelslike">
-              Ощущается как {{ Math.round(currentWeather?.feelslike_c) }} °C
-            </p>
-            <p class="weather__current-title">
-              {{ currentWeather?.condition.text }}
-            </p>
+      <div class="weather__inner-right-current">
+        <div class="weather__inner-right">
+          <div class="date">
+            {{
+              new Date(weatherInfo?.forecast.forecastday[0].date).getUTCDate()
+            }}
+            {{ arrMonth[month] }}, {{ arrDay[day] }}
+            {{ currentWeather?.last_updated.match(/\b\d\d:\d\d\b/).toString() }}
           </div>
-          <div class="weather__current-info weather__current-info--bottom">
-            <div class="weather__current-wind">
-              <img :src="require('@/assets/weather/wind.png')" alt="wind" />
-              <span>Wind | {{ currentWeather?.wind_kph }} km/h |</span>
-              <img
-                :src="require('@/assets/weather/compass.png')"
-                alt="compass"
-              />
-              <span>{{ currentWeather?.wind_dir }}</span>
+          <div class="weather__current">
+            <img
+              v-if="currentWeather?.is_day === 0"
+              class="weather__current-img"
+              :src="
+                require(`@/assets/weather/night/${currentWeather?.condition.text}.png`)
+              "
+              alt=""
+            />
+            <img
+              v-else-if="currentWeather?.is_day === 1"
+              class="weather__current-img"
+              :src="
+                require(`@/assets/weather/day/${currentWeather?.condition.text}.png`)
+              "
+              alt=""
+            />
+            <div class="weather__current-info">
+              <p class="weather__current-temp">
+                {{ Math.round(currentWeather?.temp_c) }} °C
+              </p>
+              <p class="weather__current-temp--feelslike">
+                Ощущается как {{ Math.round(currentWeather?.feelslike_c) }} °C
+              </p>
+              <p class="weather__current-title">
+                {{ currentWeather?.condition.text }}
+              </p>
             </div>
-            <div class="weather__current-humidity">
-              <img
-                :src="require('@/assets/weather/humidity.png')"
-                alt="humidity"
-              />
-              <span>Hum | {{ currentWeather?.humidity }} %</span>
-            </div>
-          </div>
-          <div class="weather__current-info weather__current-info--time">
-            <button
-              :disabled="currentSlide === 0"
-              :class="{
-                'arrow-active': currentSlide > 0,
-                'arrow-disabled': currentSlide === 0,
-              }"
-              @click="prevDayTime()"
-              class="arrow-prev"
-            >
-              <img :src="require('@/assets/left-arrow.png')" alt="" />
-            </button>
-            <div class="weather__current-wrapper">
-              <div
-                ref="currentTime"
-                class="weather__current-time"
-                v-for="(weaterTime, index) in weatherInfo?.forecast
-                  .forecastday[0].hour"
-                :key="index"
-                :style="{
-                  left: `${-84 * currentSlide}px`,
-                }"
-              >
-                <span>{{
-                  weaterTime.time.match(/\b\d\d:\d\d\b/).toString()
-                }}</span>
+            <div class="weather__current-info weather__current-info--bottom">
+              <div class="weather__current-wind">
+                <img :src="require('@/assets/weather/wind.png')" alt="wind" />
+                <span>Wind | {{ currentWeather?.wind_kph }} km/h |</span>
                 <img
-                  class="weather__current-img weather__current-img--time"
-                  v-if="weaterTime.is_day == 0"
-                  :src="
-                    require(`@/assets/weather/night/${weaterTime.condition.text}.png`)
-                  "
-                  :alt="weaterTime.condition.text"
+                  :src="require('@/assets/weather/compass.png')"
+                  alt="compass"
                 />
+                <span>{{ currentWeather?.wind_dir }}</span>
+              </div>
+              <div class="weather__current-humidity">
                 <img
-                  class="weather__current-img weather__current-img--time"
-                  v-else-if="weaterTime.is_day == 1"
-                  :src="
-                    require(`@/assets/weather/day/${weaterTime.condition.text}.png`)
-                  "
-                  :alt="weaterTime.condition.text"
+                  :src="require('@/assets/weather/humidity.png')"
+                  alt="humidity"
                 />
-                <span>{{ Math.round(weaterTime.temp_c) }} °C</span>
+                <span>Hum | {{ currentWeather?.humidity }} %</span>
               </div>
             </div>
-            <button
-              :disabled="currentSlide === 20"
-              :class="{
-                'arrow-active': currentSlide < 20,
-                'arrow-disabled': currentSlide === 20,
-              }"
-              @click="nextDayTime()"
-              class="arrow-next"
-            >
-              <img :src="require('@/assets/right-arrow.png')" alt="" />
-            </button>
+            <div class="weather__current-info weather__current-info--time">
+              <button
+                :disabled="currentSlide === 0"
+                :class="{
+                  'arrow-active': currentSlide > 0,
+                  'arrow-disabled': currentSlide === 0,
+                }"
+                @click="prevDayTime()"
+                class="arrow-prev"
+              >
+                <img :src="require('@/assets/left-arrow.png')" alt="" />
+              </button>
+              <div class="weather__current-wrapper">
+                <div
+                  ref="currentTime"
+                  class="weather__current-time"
+                  v-for="(weaterTime, index) in weatherInfo?.forecast
+                    .forecastday[0].hour"
+                  :key="index"
+                  :style="{
+                    left: `${-84 * currentSlide}px`,
+                  }"
+                >
+                  <span>{{
+                    weaterTime.time.match(/\b\d\d:\d\d\b/).toString()
+                  }}</span>
+                  <img
+                    class="weather__current-img weather__current-img--time"
+                    v-if="weaterTime.is_day == 0"
+                    :src="
+                      require(`@/assets/weather/night/${weaterTime.condition.text}.png`)
+                    "
+                    :alt="weaterTime.condition.text"
+                  />
+                  <img
+                    class="weather__current-img weather__current-img--time"
+                    v-else-if="weaterTime.is_day == 1"
+                    :src="
+                      require(`@/assets/weather/day/${weaterTime.condition.text}.png`)
+                    "
+                    :alt="weaterTime.condition.text"
+                  />
+                  <span>{{ Math.round(weaterTime.temp_c) }} °C</span>
+                </div>
+              </div>
+              <button
+                :disabled="currentSlide === 20"
+                :class="{
+                  'arrow-active': currentSlide < 20,
+                  'arrow-disabled': currentSlide === 20,
+                }"
+                @click="nextDayTime()"
+                class="arrow-next"
+              >
+                <img :src="require('@/assets/right-arrow.png')" alt="" />
+              </button>
+            </div>
           </div>
         </div>
+        <DayLightInfo
+          v-if="rotateDayLight"
+          :dayLightInfo="weatherInfo?.forecast.forecastday[0].astro"
+        ></DayLightInfo>
       </div>
     </div>
   </div>
@@ -172,6 +181,8 @@ export default {
       month: new Date().getMonth(),
       numericDay: new Date().getUTCDate(),
       currentSlide: 0,
+      widthDocument: 0,
+      rotateDayLight: false,
     };
   },
   components: { WeatherForecastBlock, DayLightInfo, ForecastWeather },
@@ -195,6 +206,20 @@ export default {
       currentWeather: (state) => state.weather.currentWeather,
     }),
   },
+  mounted() {
+    setInterval(() => {
+      this.widthDocument = document.body.offsetWidth;
+    }, 1000);
+  },
+  watch: {
+    widthDocument(width) {
+      if (width <= 1440) {
+        this.rotateDayLight = true;
+      } else {
+        this.rotateDayLight = false;
+      }
+    },
+  },
 };
 </script>
 
@@ -205,20 +230,48 @@ export default {
   z-index: 1;
   width: 1850px;
   height: 880px;
+  @media (max-width: 1440px) {
+    height: fit-content;
+    width: 1350px;
+  }
   border: 1px solid rgba($color: #1ce3cf, $alpha: 0.5);
   border-radius: 8px;
   &__inner {
     display: flex;
+    justify-content: space-around;
     height: 880px;
     align-items: center;
-
+    @media (max-width: 1440px) {
+      height: fit-content;
+      align-items: stretch;
+    }
+    @media (min-width: 1024px) {
+      justify-content: center;
+    }
     &-left {
       width: 100%;
       display: flex;
       flex-direction: column;
       gap: 15px;
+
+      @media (max-width: 1440px) {
+        width: 55%;
+        justify-content: space-between;
+        align-items: center;
+      }
+
       &-top {
         align-self: flex-end;
+
+        @media (max-width: 1440px) {
+          align-self: flex-start;
+          margin-left: 12px;
+          margin-top: 20px;
+        }
+        @media (min-width: 1024px) {
+          margin-left: 0px;
+          align-self: center;
+        }
       }
       &-bottom {
         width: 100%;
@@ -227,6 +280,15 @@ export default {
         align-self: flex-end;
         justify-content: space-between;
         margin-bottom: 50px;
+
+        @media (max-width: 1440px) {
+          flex-direction: column;
+          align-items: center;
+          margin-bottom: 20px;
+        }
+        @media (min-width: 1024px) {
+          margin-right: 0px;
+        }
       }
     }
     &-right {
@@ -241,6 +303,23 @@ export default {
       background-color: rgba(transparent, 0.1);
       backdrop-filter: blur(5px);
       margin-right: 50px;
+      @media (max-width: 1440px) {
+        margin-right: 0;
+      }
+      &-current {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        @media (max-width: 1440px) {
+          margin-top: 20px;
+          margin-bottom: 20px;
+        }
+        & .daylight {
+          margin-left: 0;
+          margin-top: 10px;
+        }
+      }
     }
   }
   &__current {
@@ -250,10 +329,16 @@ export default {
     align-items: center;
     gap: 20px;
     margin-top: 50px;
+    @media (max-width: 1024px) {
+      font-size: 16px !important;
+    }
     &-img {
       width: 200px;
       height: 200px;
-
+      @media (max-width: 1024px) {
+        width: 150px;
+        height: 150px;
+      }
       &--time {
         width: 64px;
         height: 64px;

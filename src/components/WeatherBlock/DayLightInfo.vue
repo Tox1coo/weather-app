@@ -71,6 +71,9 @@ export default {
 <style scoped lang="scss">
 .daylight {
   margin-left: 50px;
+  @media (max-width: 1440px) {
+    order: 1;
+  }
   &__inner {
     width: 500px;
     height: 300px;
