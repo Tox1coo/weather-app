@@ -6,7 +6,7 @@ export const weather = {
 	state: () => {
 		return {
 			WEATHER_API: '5335145300994666ae6125040220107',
-			BASE_URL: 'http://api.weatherapi.com/v1/',
+			BASE_URL: 'https://api.weatherapi.com/v1/',
 			weatherInfo: null,
 			currentWeather: null
 		};
