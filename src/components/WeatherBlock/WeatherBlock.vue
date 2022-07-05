@@ -286,7 +286,7 @@ export default {
           align-items: center;
           margin-bottom: 20px;
         }
-        @media (min-width: 1024px) {
+        @media (min-width: 1024px) and (max-width: 1440px) {
           margin-right: 0px;
         }
       }
