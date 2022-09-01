@@ -22,24 +22,18 @@ export const weather = {
 	},
 
 	actions: {
-		async getWeatherInfo({ commit, state }, userInfo) {
-			await axios({
-				method: 'get',
-				url: `${state.BASE_URL}forecast.json?key=${state.WEATHER_API}&q=${userInfo.city}&days=5&aqi=no&alerts=no`
-			}).then((response) => {
-				commit('updateCurrentWeather', response.data.current)
-				commit('updateWeatherInfo', response.data)
-			})
-		},
-		async getWeather({ commit, state }, city) {
+		async getWeatherInfo({ commit, state }, city) {
 			await axios({
 				method: 'get',
 				url: `${state.BASE_URL}forecast.json?key=${state.WEATHER_API}&q=${city}&days=5&aqi=no&alerts=no`
 			}).then((response) => {
 				commit('updateCurrentWeather', response.data.current)
 				commit('updateWeatherInfo', response.data)
+				commit('dbCountry/updateIsLoading', true, { root: true })
+
 			})
-		}
+		},
+
 	},
 
 	namespaced: true,

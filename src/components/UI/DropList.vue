@@ -38,7 +38,7 @@ export default {
       setCurrentCity: "dbCountry/setCurrentCity",
     }),
     ...mapActions({
-      getWeather: "weather/getWeather",
+      getWeatherInfo: "weather/getWeatherInfo",
     }),
     setSearchList(country) {
       this.updateCityList(country);
@@ -52,7 +52,7 @@ export default {
       } else {
         this.setCurrentCity(country);
         this.listItem = this.city;
-        this.getWeather(this.city);
+        this.getWeatherInfo(this.city);
       }
     },
   },

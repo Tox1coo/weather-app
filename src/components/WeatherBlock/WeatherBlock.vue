@@ -4,7 +4,7 @@
       <div class="weather__inner-left">
         <div class="weather__inner-left-top">
           <ForecastWeather
-            :forecastInfo="weatherInfo?.forecast.forecastday"
+            :forecastInfo="weatherInfo.forecast.forecastday"
             :arrDay="arrDay"
             :arrMonths="arrMonth"
           ></ForecastWeather>
@@ -12,7 +12,7 @@
         <div class="weather__inner-left-bottom">
           <DayLightInfo
             v-if="!rotateDayLight"
-            :dayLightInfo="weatherInfo?.forecast.forecastday[0].astro"
+            :dayLightInfo="weatherInfo.forecast.forecastday[0].astro"
           ></DayLightInfo>
           <WeatherForecastBlock
             :weatherForecastBlock="weatherInfo?.forecast"
@@ -24,116 +24,17 @@
       <div class="weather__inner-right-current">
         <div class="weather__inner-right">
           <div class="date">
-            {{
-              new Date(weatherInfo?.forecast.forecastday[0].date).getUTCDate()
-            }}
-            {{ arrMonth[month] }}, {{ arrDay[day] }}
-            {{ currentWeather?.last_updated.match(/\b\d\d:\d\d\b/).toString() }}
+            {{ getDate }}
           </div>
-          <div class="weather__current">
-            <img
-              v-if="currentWeather?.is_day === 0"
-              class="weather__current-img"
-              :src="
-                require(`@/assets/weather/night/${currentWeather?.condition.text}.png`)
-              "
-              alt=""
-            />
-            <img
-              v-else-if="currentWeather?.is_day === 1"
-              class="weather__current-img"
-              :src="
-                require(`@/assets/weather/day/${currentWeather?.condition.text}.png`)
-              "
-              alt=""
-            />
-            <div class="weather__current-info">
-              <p class="weather__current-temp">
-                {{ Math.round(currentWeather?.temp_c) }} °C
-              </p>
-              <p class="weather__current-temp--feelslike">
-                Ощущается как {{ Math.round(currentWeather?.feelslike_c) }} °C
-              </p>
-              <p class="weather__current-title">
-                {{ currentWeather?.condition.text }}
-              </p>
-            </div>
-            <div class="weather__current-info weather__current-info--bottom">
-              <div class="weather__current-wind">
-                <img :src="require('@/assets/weather/wind.png')" alt="wind" />
-                <span>Wind | {{ currentWeather?.wind_kph }} km/h |</span>
-                <img
-                  :src="require('@/assets/weather/compass.png')"
-                  alt="compass"
-                />
-                <span>{{ currentWeather?.wind_dir }}</span>
-              </div>
-              <div class="weather__current-humidity">
-                <img
-                  :src="require('@/assets/weather/humidity.png')"
-                  alt="humidity"
-                />
-                <span>Hum | {{ currentWeather?.humidity }} %</span>
-              </div>
-            </div>
-            <div class="weather__current-info weather__current-info--time">
-              <button
-                :disabled="currentSlide === 0"
-                :class="{
-                  'arrow-active': currentSlide > 0,
-                  'arrow-disabled': currentSlide === 0,
-                }"
-                @click="prevDayTime()"
-                class="arrow-prev"
-              >
-                <img :src="require('@/assets/left-arrow.png')" alt="" />
-              </button>
-              <div class="weather__current-wrapper">
-                <div
-                  ref="currentTime"
-                  class="weather__current-time"
-                  v-for="(weaterTime, index) in weatherInfo?.forecast
-                    .forecastday[0].hour"
-                  :key="index"
-                  :style="{
-                    left: `${-84 * currentSlide}px`,
-                  }"
-                >
-                  <span>{{
-                    weaterTime.time.match(/\b\d\d:\d\d\b/).toString()
-                  }}</span>
-                  <img
-                    class="weather__current-img weather__current-img--time"
-                    v-if="weaterTime.is_day == 0"
-                    :src="
-                      require(`@/assets/weather/night/${weaterTime.condition.text}.png`)
-                    "
-                    :alt="weaterTime.condition.text"
-                  />
-                  <img
-                    class="weather__current-img weather__current-img--time"
-                    v-else-if="weaterTime.is_day == 1"
-                    :src="
-                      require(`@/assets/weather/day/${weaterTime.condition.text}.png`)
-                    "
-                    :alt="weaterTime.condition.text"
-                  />
-                  <span>{{ Math.round(weaterTime.temp_c) }} °C</span>
-                </div>
-              </div>
-              <button
-                :disabled="currentSlide === 20"
-                :class="{
-                  'arrow-active': currentSlide < 20,
-                  'arrow-disabled': currentSlide === 20,
-                }"
-                @click="nextDayTime()"
-                class="arrow-next"
-              >
-                <img :src="require('@/assets/right-arrow.png')" alt="" />
-              </button>
-            </div>
-          </div>
+
+          <WeatherCurrent
+            @prevSlide="prevDayTime"
+            @nextSlide="nextDayTime"
+            :weatherInfo="weatherInfo"
+            :currentSlide="currentSlide"
+            :currentWeather="currentWeather"
+          >
+          </WeatherCurrent>
         </div>
         <DayLightInfo
           v-if="rotateDayLight"
@@ -149,6 +50,7 @@
 import WeatherForecastBlock from "@/components/WeatherBlock/WeatherForecastBlock.vue";
 import DayLightInfo from "@/components/WeatherBlock/DayLightInfo.vue";
 import ForecastWeather from "@/components/WeatherBlock/ForecastWeather.vue";
+import WeatherCurrent from "@/components/WeatherBlock/WeatherCurrent.vue";
 
 import { mapActions, mapState } from "vuex";
 export default {
@@ -163,7 +65,6 @@ export default {
         "Friday",
         "Saturday",
       ],
-      day: new Date().getDay(),
       arrMonth: [
         "January",
         "February",
@@ -178,19 +79,18 @@ export default {
         "November",
         "December",
       ],
-      month: new Date().getMonth(),
-      numericDay: new Date().getUTCDate(),
       currentSlide: 0,
       widthDocument: 0,
       rotateDayLight: false,
     };
   },
-  components: { WeatherForecastBlock, DayLightInfo, ForecastWeather },
+  components: {
+    WeatherForecastBlock,
+    DayLightInfo,
+    ForecastWeather,
+    WeatherCurrent,
+  },
   methods: {
-    ...mapActions({
-      getWeatherInfo: "weather/getWeatherInfo",
-    }),
-
     nextDayTime() {
       const maxSlides = 20;
       if (this.currentSlide < maxSlides) this.currentSlide += 2;
@@ -205,13 +105,26 @@ export default {
       weatherInfo: (state) => state.weather.weatherInfo,
       currentWeather: (state) => state.weather.currentWeather,
     }),
+    getMonth() {
+      return new Date().getMonth();
+    },
+    getDay() {
+      return new Date().getDay();
+    },
+    getDate() {
+      return `${new Date(
+        this.weatherInfo?.forecast.forecastday[0].date
+      ).getUTCDate()}
+             ${this.arrMonth[this.getMonth]} ,  ${this.arrDay[this.getDay]}
+             ${this.currentWeather?.last_updated
+               .match(/\b\d\d:\d\d\b/)
+               .toString()}`;
+    },
   },
   mounted() {
-    setInterval(() => {
-      this.widthDocument = document.body.offsetWidth;
-    }, 1000);
+    // this.widthDocument = document.body.offsetWidth;
   },
-  watch: {
+  /*   watch: {
     widthDocument(width) {
       if (width <= 1440) {
         this.rotateDayLight = true;
@@ -219,7 +132,7 @@ export default {
         this.rotateDayLight = false;
       }
     },
-  },
+  }, */
 };
 </script>
 
@@ -322,135 +235,11 @@ export default {
       }
     }
   }
-  &__current {
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-    margin-top: 50px;
-    @media (max-width: 1024px) {
-      font-size: 16px !important;
-    }
-    &-img {
-      width: 200px;
-      height: 200px;
-      @media (max-width: 1024px) {
-        width: 150px;
-        height: 150px;
-      }
-      &--time {
-        width: 64px;
-        height: 64px;
-      }
-    }
 
-    &-time {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 5px;
-      color: #5c92ff;
-      position: relative;
-      transition: all 0.3s ease 0s;
-    }
-
-    &-wrapper {
-      display: flex;
-      gap: 20px;
-      overflow: hidden;
-    }
-    &-info {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-
-      &--bottom {
-        margin-top: 25px;
-      }
-
-      &--time {
-        max-width: 320px;
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        position: relative;
-        margin-top: 20px;
-      }
-    }
-
-    &-title {
-      @extend .date;
-      margin-top: 25px !important;
-      margin-bottom: 0;
-      margin-left: 0;
-    }
-    &-temp {
-      @extend .date;
-      margin: 0 !important;
-      font-size: 50px !important;
-      &--feelslike {
-        @extend .date;
-        font-size: 20px !important;
-        margin-bottom: 0;
-        margin-left: 0;
-      }
-    }
-
-    &-wind {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      color: #5c92ff;
-      font-size: 25px;
-    }
-
-    &-humidity {
-      @extend .weather__current-wind;
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      width: 100%;
-      margin-top: 10px;
-    }
-  }
   background-color: rgba(transparent, 0.2);
   backdrop-filter: blur(5px);
 }
-.arrow-prev {
-  position: absolute;
-  width: 28px;
-  height: 28px;
-  border-radius: 50px;
-  background-color: rgba(#000, 0.1);
-  backdrop-filter: blur(5px);
-  left: -32px;
-  border: 1px solid rgba(#1ce3cf, 0.8);
-  transition: opacity 0.1s linear;
-  cursor: pointer;
-  img {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    z-index: 1;
-    transform: translate(-50%, -50%);
-  }
-}
 
-.arrow-next {
-  @extend .arrow-prev;
-  right: 0 !important;
-  left: 101%;
-}
-
-.arrow-active {
-  opacity: 1;
-}
-
-.arrow-disabled {
-  opacity: 0.3;
-}
 .date {
   font-family: "Roboto";
   font-size: 25px;

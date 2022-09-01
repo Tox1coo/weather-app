@@ -5,6 +5,7 @@
         {{ new Date(day).getUTCDate() }}
         {{ arrMonths[new Date(day).getMonth()] }},
         {{ arrDay[new Date(day).getDay()] }}
+        <!-- Переписать на геттерс -->
       </div>
       <div class="forecastitem__timestamp">
         <div

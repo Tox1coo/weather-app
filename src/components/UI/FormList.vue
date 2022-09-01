@@ -48,11 +48,11 @@ export default {
       } else {
         this.setCurrentCity(this.listItem);
         this.listItem = this.city;
-        this.getWeather(this.city);
+        this.getWeatherInfo(this.city);
       }
     },
     ...mapActions({
-      getWeather: "weather/getWeather",
+      getWeatherInfo: "weather/getWeatherInfo",
     }),
   },
 

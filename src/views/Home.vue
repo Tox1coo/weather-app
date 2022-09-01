@@ -1,71 +1,29 @@
 <template>
-  <NavBar :check="check"></NavBar>
-  <WeatherBlock></WeatherBlock>
+  <NavBar :check="isLoading"></NavBar>
+  <WeatherBlock v-if="isLoading"></WeatherBlock>
 </template>
 
 <script>
 /* eslint-disable no-unused-vars */
 
-import { mapActions, mapMutations, mapState } from "vuex";
+import { mapActions, mapState } from "vuex";
 import WeatherBlock from "@/components/WeatherBlock/WeatherBlock.vue";
 import axios from "axios";
 export default {
-  data() {
-    return {
-      infoUser: {
-        country: "",
-        city: "",
-      },
-      check: false,
-    };
-  },
   components: { WeatherBlock },
 
-  async mounted() {
-    await this.getInfoUser();
+  mounted() {
+    this.getInfoUser();
   },
 
   methods: {
-    ...mapMutations({
-      setCurrentCity: "dbCountry/setCurrentCity",
-      setCurrentCountry: "dbCountry/setCurrentCountry",
-      updateCityList: "dbCountry/updateCityList",
-    }),
     ...mapActions({
-      getWeatherInfo: "weather/getWeatherInfo",
-      getWeather: "weather/getWeather",
+      getInfoUser: "dbCountry/getInfoUser",
     }),
-    async getInfoUser() {
-      await axios({
-        method: "get",
-        url: "https://api.sypexgeo.net/json",
-      })
-        .then((response) => {
-          this.infoUser.city = response.data.city.name_en;
-          this.infoUser.country = response.data.country.name_en;
-        })
-        .finally(async () => {
-          setTimeout(() => {
-            this.setCurrentCountry(this.infoUser.country);
-            this.updateCityList(this.infoUser.country);
-          }, 400);
-          setTimeout(() => {
-            this.setCurrentCity(this.infoUser.city);
-          }, 500);
-          this.check = true;
-          this.getWeatherInfo(this.infoUser);
-        });
-      setTimeout(() => {
-        setInterval(async () => {
-          this.getWeather(this.city);
-          console.log(this.city);
-        }, 100000);
-      }, 600);
-    },
   },
   computed: {
     ...mapState({
-      city: (state) => state.dbCountry.city,
+      isLoading: (state) => state.dbCountry.isLoading,
     }),
   },
 };

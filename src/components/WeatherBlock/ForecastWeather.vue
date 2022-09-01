@@ -75,12 +75,12 @@ export default {
     },
   },
 
-  mounted() {
+  /*   mounted() {
     setInterval(() => {
       this.widthDocument = document.body.offsetWidth;
     }, 1000);
-  },
-  watch: {
+  }, */
+  /*   watch: {
     widthDocument(width) {
       if (width <= 1440) {
         this.visibleSlide = 1.5;
@@ -89,7 +89,7 @@ export default {
         this.currentDay = 0;
       }
     },
-  },
+  }, */
 };
 </script>
 

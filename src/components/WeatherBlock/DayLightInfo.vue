@@ -10,7 +10,7 @@
       <div class="daylight__text">
         <span>Dayligt</span>
         <span :style="'position: relative; z-index:1000;'" id="time">{{
-          mergeDateTime(dayLightInfo?.sunrise, dayLightInfo?.sunset)
+          getMergeDateTime
         }}</span>
       </div>
       <div class="daylight__time">
@@ -32,20 +32,17 @@
 
 import moment from "moment";
 export default {
-  data() {
-    return {
-      hourDayLight: "",
-      minuteDayLight: "",
-    };
-  },
   props: {
     dayLightInfo: { type: Object },
   },
-
-  methods: {
-    mergeDateTime(timeSunrise, timeSunset) {
-      const parsedTimeSunrise = moment(timeSunrise, ["h:mm A"]).format("HH:mm");
-      const parsedTimeSunset = moment(timeSunset, ["h:mm A"]).format("HH:mm");
+  computed: {
+    getMergeDateTime() {
+      const parsedTimeSunrise = moment(this.dayLightInfo?.sunrise, [
+        "h:mm A",
+      ]).format("HH:mm");
+      const parsedTimeSunset = moment(this.dayLightInfo?.sunset, [
+        "h:mm A",
+      ]).format("HH:mm");
       const hourSunrise = parsedTimeSunrise.match(/\b\d\d\b/);
       const minuteSunrise = parsedTimeSunrise
         .match(/\b:\d\d\b/)
@@ -56,13 +53,14 @@ export default {
         .match(/\b:\d\d\b/)
         ?.toString()
         .replace(/:/g, "");
-      this.hourDayLight = hourSunset - hourSunrise;
-      this.minuteDayLight = minuteSunset - minuteSunrise;
-      if (this.minuteDayLight <= 0) {
-        this.minuteDayLight = 60 + this.minuteDayLight;
-        this.hourDayLight--;
+      let hourDayLight = hourSunset - hourSunrise;
+      let minuteDayLight = minuteSunset - minuteSunrise;
+      if (minuteDayLight <= 0) {
+        minuteDayLight = 60 + minuteDayLight;
+        hourDayLight--;
       }
-      return `${this.hourDayLight}h ${this.minuteDayLight}min`;
+
+      return `${hourDayLight}h ${minuteDayLight}min`;
     },
   },
 };
