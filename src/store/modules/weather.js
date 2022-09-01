@@ -30,7 +30,6 @@ export const weather = {
 				commit('updateCurrentWeather', response.data.current)
 				commit('updateWeatherInfo', response.data)
 				commit('dbCountry/updateIsLoading', true, { root: true })
-
 			})
 		},
 
