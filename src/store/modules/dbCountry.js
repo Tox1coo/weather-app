@@ -25,14 +25,18 @@ export const dbCountry = {
 		},
 
 		setCurrentCountry(state, country) {
-			state.allCityList = [];
-			state.city = '';
+			console.log(country);
 
-			state.country = state.allCountryList.filter(listItem => listItem.toLowerCase().includes(country.toLowerCase()))[0] || 'Russia';
+			state.country = [...state.allCountryList].filter(listItem => listItem.toLowerCase().includes(country.toLowerCase()))[0] || 'Russia';
+
 		},
 
 		setCurrentCity(state, city) {
-			state.city = state.allCityList.filter(listItem => listItem.toLowerCase().includes(city.toLowerCase()))[0] || 'Moscow';
+			console.log(city);
+			console.log(state.allCityList);
+			state.city = [...state.allCityList].filter(listItem => listItem.toLowerCase().includes(city.toLowerCase()))[0] || 'Moscow';
+
+
 		},
 
 		updateAllListCountryAndCity(state, allListCountryAndCity) {
@@ -70,13 +74,14 @@ export const dbCountry = {
 	},
 
 	actions: {
-		async getAllCountryList({ commit }) {
+		async getAllCountryList({ commit, dispatch }) {
 			await axios({
 				method: 'get',
 				url: 'https://raw.githubusercontent.com/David-Haim/CountriesToCitiesJSON/master/countriesToCities.json',
 			}).then((response) => {
 				commit('updateAllListCountryAndCity', response.data)
 				commit('updateCountryList', response.data);
+				dispatch('getInfoUser', null)
 			})
 		},
 		getInfoUser({ commit, dispatch, state }) {
@@ -88,6 +93,7 @@ export const dbCountry = {
 					country: response.data.country.name_en,
 					city: response.data.city.name_en
 				}
+				console.log(infoUser);
 				commit('setCurrentCountry', infoUser.country)
 				commit('updateCityList', infoUser.country)
 				commit('setCurrentCity', infoUser.city)

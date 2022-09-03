@@ -1,6 +1,7 @@
 <template>
   <NavBar :check="isLoading"></NavBar>
   <WeatherBlock v-if="isLoading"></WeatherBlock>
+  <IsLoading v-else></IsLoading>
 </template>
 
 <script>
@@ -8,13 +9,10 @@
 
 import { mapActions, mapState } from "vuex";
 import WeatherBlock from "@/components/WeatherBlock/WeatherBlock.vue";
-import axios from "axios";
 export default {
   components: { WeatherBlock },
 
-  mounted() {
-    this.getInfoUser();
-  },
+  mounted() {},
 
   methods: {
     ...mapActions({

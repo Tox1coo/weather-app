@@ -9,7 +9,8 @@ import Home from "@/views/Home.vue";
 export default {
   components: { Home },
 
-  async mounted() {
+  mounted() {
+    this.getAllCountryList();
     let app = document.getElementById("app");
     const time = new Date().getHours();
     if (time >= 9 && time <= 19) {
@@ -17,7 +18,6 @@ export default {
     } else {
       app.style.cssText = `background: url(${require("@/assets/night.jpg")}) #ccc center no-repeat; background-size: cover`;
     }
-    await this.getAllCountryList();
   },
   methods: {
     ...mapActions({
